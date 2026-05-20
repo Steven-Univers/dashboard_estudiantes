@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import { Menu } from 'lucide-vue-next'
+
+const emit = defineEmits(['toggle-sidebar'])
+
+const handleMenuClick = () => {
+  emit('toggle-sidebar')
+}
 // import { ChevronDown, Menu } from 'lucide-vue-next'
 </script>
 
@@ -8,7 +14,7 @@ import { Menu } from 'lucide-vue-next'
 
     <div class="grid grid-cols-2">
       <div>
-        <button class="text-[#7B009D] hover:text-[#5f256e]">
+        <button @click="handleMenuClick" class="text-[#7B009D] hover:text-[#5f256e]">
           <Menu class="w-6 h-6" />
         </button>
       </div>
