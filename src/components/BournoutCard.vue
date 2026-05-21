@@ -28,7 +28,7 @@ const chartOptions = {
 
 <template>
   <div
-    class="bg-white rounded-2xl border border-gray-100 p-6 shadow-lg flex flex-col justify-between w-100"
+    class="bg-white rounded-2xl border border-gray-100 p-6 shadow-lg flex flex-col justify-between w-100 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 cursor-pointer"
   >
     <!-- header de la card -->
     <div class="flex items-start gap-4 mb-6">

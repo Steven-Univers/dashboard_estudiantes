@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BournoutCard from './BournoutCard.vue';
+import CardsComponents from './CardsComponents.vue';
 </script>
 
 <template>
@@ -14,12 +15,17 @@ import BournoutCard from './BournoutCard.vue';
           </p>
         </div>
 
-        <div>
           <!-- card de burnout -->
-          <BournoutCard/>
+    <div class="grid grid-cols-12 gap-8 items-start">
 
-          <div class="">
-          </div>
-        </div>
-      </main>
+      <div class="col-span-5">
+        <BournoutCard />
+      </div>
+
+      <div class="col-span-7 w-full">
+        <CardsComponents />
+      </div>
+    </div>
+  
+  </main>
 </template>
