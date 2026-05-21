@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import {
   Chart as ChartJS,
   Title,
@@ -7,13 +8,14 @@ import {
   BarElement,
   CategoryScale,
   LinearScale,
-  PointElement, 
-  LineElement,   
-  Filler        
+  PointElement,
+  LineElement,
+  Filler
 } from 'chart.js'
 
-import { Bar, Line } from 'vue-chartjs' 
+import { Bar, Line } from 'vue-chartjs'
 import { Clock3 } from 'lucide-vue-next'
+import type { StudentMetrics } from '@/models/student.model'
 
 ChartJS.register(
   Title,
@@ -27,43 +29,69 @@ ChartJS.register(
   Filler
 )
 
+const props = defineProps<{
+  students: StudentMetrics[]
+  isLoading: boolean
+}>()
+
+const promptLevels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'] as const
+
+const promptSkillCounts = computed(() => {
+  return promptLevels.map((level) =>
+    props.students.filter((student) => student.Prompt_Engineering_Skill === level).length
+  )
+})
+
+const weeklyAverage = computed(() => {
+  if (!props.students.length) return 0
+
+  const total = props.students.reduce((sum, student) => sum + student.Weekly_GenAI_Hours, 0)
+  return total / props.students.length
+})
+
+const weeklySample = computed(() => {
+  const sample = props.students.slice(0, 7).map((student) => student.Weekly_GenAI_Hours)
+
+  if (sample.length === 7) return sample
+  if (!sample.length) return [0, 0, 0, 0, 0, 0, 0]
+
+  while (sample.length < 7) {
+    sample.push(sample[sample.length - 1] ?? 0)
+  }
+
+  return sample
+})
+
 /* ================= BAR CHART (Prompt Engineering) ================= */
-const barData = {
-  labels: ['1', '2', '3', '4', '5'],
+const barData = computed(() => ({
+  labels: ['Beginner', 'Intermediate', 'Advanced', 'Expert'],
   datasets: [
     {
       label: 'Estudiantes',
-      data: [9, 19, 34, 25, 13],
-      backgroundColor: [
-        '#A7F3D0', 
-        '#6EE7B7', 
-        '#34D399', 
-        '#059669', 
-        '#047857'
-      ],
+      data: promptSkillCounts.value,
+      backgroundColor: ['#A7F3D0', '#6EE7B7', '#34D399', '#059669'],
       borderRadius: 4,
       barThickness: 16
     }
   ]
-}
+}))
 
 /* ================= LINE CHART (Weekly GenAI Hours) ================= */
-const lineData = {
-  
+const lineData = computed(() => ({
   labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
   datasets: [
     {
       label: 'Horas Promedio',
-      data: [4.5, 5.8, 6.2, 6.7, 7.1, 6.4, 6.9],
-      borderColor: '#0D9488', 
-      backgroundColor: 'rgba(13, 148, 136, 0.1)', 
-      tension: 0.4, 
+      data: weeklySample.value,
+      borderColor: '#0D9488',
+      backgroundColor: 'rgba(13, 148, 136, 0.1)',
+      tension: 0.4,
       fill: true,
       pointRadius: 4,
       pointBackgroundColor: '#0D9488'
     }
   ]
-}
+}))
 
 const chartOptions = {
   responsive: true,
@@ -86,7 +114,7 @@ const lineOptions = {
   scales: {
     y: {
       grid: {
-        color: '#F3F4F6' 
+        color: '#F3F4F6'
       },
       ticks: {
         font: { size: 10 }
@@ -94,7 +122,7 @@ const lineOptions = {
     },
     x: {
       grid: {
-        display: false 
+        display: false
       },
       ticks: {
         font: { size: 10 }
@@ -105,10 +133,10 @@ const lineOptions = {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 w-full">
+  <div class="flex flex-col gap-6 w-full lg:min-h-[34rem] min-w-0">
 
-    <div class="w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-      <div class="flex items-start gap-4 mb-6">
+    <div class="w-full lg:flex-1 bg-white rounded-2xl shadow-lg border border-gray-100 p-5 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 cursor-pointer min-w-0">
+      <div class="flex items-start gap-4 mb-4">
         <div class="w-11 h-11 rounded-xl bg-indigo-900 flex items-center justify-center text-white shrink-0">
           <Clock3 :size="20" />
         </div>
@@ -122,12 +150,12 @@ const lineOptions = {
         </div>
       </div>
 
-      <div class="grid grid-cols-[1.8fr_1.2fr] gap-6 items-center">
-        <div class="border-r border-gray-100 pr-4">
+      <div class="grid grid-cols-1 md:grid-cols-[1.8fr_1.2fr] gap-5 md:gap-6 items-center min-w-0">
+        <div class="md:border-r border-gray-100 md:pr-4 min-w-0">
           <h4 class="text-indigo-900 font-semibold text-xs mb-4">
             Distribución por nivel
           </h4>
-          <div class="h-36">
+          <div class="h-40 sm:h-36 lg:h-28 relative min-w-0">
             <Bar :data="barData" :options="chartOptions" />
           </div>
           <div class="flex justify-between text-[10px] text-gray-400 mt-2 px-1">
@@ -136,14 +164,14 @@ const lineOptions = {
           </div>
         </div>
 
-        <div class="bg-indigo-950 text-white rounded-xl p-4 text-xs font-medium leading-relaxed">
+        <div class="bg-indigo-950 text-white rounded-xl p-4 text-xs font-medium leading-relaxed min-w-0">
           <span>Se observa mejora moderada en habilidades a mayor uso de AI.</span>
         </div>
       </div>
     </div>
 
-    <div class="w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-      <div class="flex items-start gap-4 mb-4">
+    <div class="w-full lg:flex-1 bg-white rounded-2xl shadow-lg border border-gray-100 p-5 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 cursor-pointer min-w-0">
+      <div class="flex items-start gap-4 mb-3">
         <div class="w-11 h-11 rounded-xl bg-teal-600 flex items-center justify-center text-white shrink-0">
           <Clock3 :size="20" />
         </div>
@@ -157,16 +185,18 @@ const lineOptions = {
         </div>
       </div>
 
-      <div class="flex items-baseline gap-2 mb-4 border-b border-gray-100 pb-4">
-        <span class="text-4xl font-bold text-teal-600">6.7</span>
+      <div class="flex flex-wrap items-baseline gap-2 mb-3 border-b border-gray-100 pb-3">
+        <span class="text-4xl font-bold text-teal-600">
+          {{ props.isLoading ? '...' : weeklyAverage.toFixed(2) }}
+        </span>
         <span class="text-gray-400 text-xs">horas / semana</span>
       </div>
 
       <div>
         <h4 class="text-teal-700 font-semibold text-xs mb-3">
-          Evolución de uso semanal
+          Muestra de uso semanal (API)
         </h4>
-        <div class="h-40">
+        <div class="h-40 sm:h-36 lg:h-28 relative min-w-0">
           <Line :data="lineData" :options="lineOptions" />
         </div>
       </div>
