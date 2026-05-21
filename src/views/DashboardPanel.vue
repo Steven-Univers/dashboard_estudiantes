@@ -1,9 +1,9 @@
 <script setup lang="ts">
 // importacion de componentes
 import { ref } from "vue";
-import SidebarPanel from "./SidebarPanel.vue";
-import HeaderDash from "./HeaderDash.vue";
-import MainDashboard from "./MainDashboard.vue";
+import SidebarPanel from "@/components/SidebarPanel.vue";
+import HeaderDash from "@/components/HeaderDash.vue";
+import MainDashboard from "@/components/MainDashboard.vue";
 
 // funcion que esconde el sidebar
 const isSidebarVisible = ref(true);
