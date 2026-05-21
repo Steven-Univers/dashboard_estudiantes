@@ -28,7 +28,7 @@ const chartOptions = {
 
 <template>
   <div
-    class="bg-white rounded-2xl border border-gray-100 p-6 shadow-lg flex flex-col justify-between w-100 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 cursor-pointer"
+    class="bg-white rounded-2xl border border-gray-100 p-5 sm:p-6 shadow-lg flex flex-col justify-between w-full lg:min-h-[34rem] transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 cursor-pointer"
   >
     <!-- header de la card -->
     <div class="flex items-start gap-4 mb-6">
@@ -45,11 +45,11 @@ const chartOptions = {
     <div class="text-4xl font-extrabold text-[#d63031] mb-8 px-2">27 %</div>
     <h4 class="font-bold text-gray-700 mb-4">Distribución de riesgo</h4>
 
-    <div class="flex items-center justify-between gap-4 h-48 mb-6">
-      <div class="w-1/2 h-full relative">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 sm:h-48 mb-6">
+      <div class="w-full sm:w-1/2 h-48 sm:h-full relative min-w-0">
         <Doughnut :data="chartData" :options="chartOptions" />
       </div>
-      <div class="w-1/2 space-y-3 text-sm font-semibold text-gray-600">
+      <div class="w-full sm:w-1/2 space-y-3 text-sm font-semibold text-gray-600 min-w-0">
         <div class="flex items-center gap-3">
           <span class="w-4 h-4 rounded-full bg-[#e15252]"></span> Alto (27%)
         </div>

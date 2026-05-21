@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="w-64 bg-[#231e5c] text-white flex flex-col min-h-screen p-4">
+  <div class="w-64 bg-[#231e5c] text-white flex flex-col min-h-screen p-4 h-full">
     <div class="flex items-center gap-3 px-2 py-6">
       <div class="p-4 bg-[#8b2cf5] rounded-xl text-white">
         <svg xmlns="http://www.w3.org/2000/svg"
@@ -16,7 +16,7 @@
 
     <!-- foco seleccion dashboard -->
     <div class="flex-1 space-y-2">
-      <div class="flex items-center font-bold gap-3 bg-[#9000ffaa] px-7 py-4 rounded-xl transition-colors">
+      <div class="flex items-center font-bold gap-3 bg-[#9000ffaa] px-7 py-4 rounded-xl transition-colors cursor-pointer hover:bg-[#e3bfffaa]">
        <!-- icono -->
         <p class="text-white">Dashboard</p>
       </div>
