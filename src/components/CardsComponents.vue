@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import {
   Chart as ChartJS,
   Title,
@@ -14,6 +15,7 @@ import {
 
 import { Bar, Line } from 'vue-chartjs'
 import { Clock3 } from 'lucide-vue-next'
+import type { StudentMetrics } from '@/models/student.model'
 
 ChartJS.register(
   Title,
@@ -27,34 +29,60 @@ ChartJS.register(
   Filler
 )
 
+const props = defineProps<{
+  students: StudentMetrics[]
+  isLoading: boolean
+}>()
+
+const promptLevels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'] as const
+
+const promptSkillCounts = computed(() => {
+  return promptLevels.map((level) =>
+    props.students.filter((student) => student.Prompt_Engineering_Skill === level).length
+  )
+})
+
+const weeklyAverage = computed(() => {
+  if (!props.students.length) return 0
+
+  const total = props.students.reduce((sum, student) => sum + student.Weekly_GenAI_Hours, 0)
+  return total / props.students.length
+})
+
+const weeklySample = computed(() => {
+  const sample = props.students.slice(0, 7).map((student) => student.Weekly_GenAI_Hours)
+
+  if (sample.length === 7) return sample
+  if (!sample.length) return [0, 0, 0, 0, 0, 0, 0]
+
+  while (sample.length < 7) {
+    sample.push(sample[sample.length - 1] ?? 0)
+  }
+
+  return sample
+})
+
 /* ================= BAR CHART (Prompt Engineering) ================= */
-const barData = {
-  labels: ['1', '2', '3', '4', '5'],
+const barData = computed(() => ({
+  labels: ['Beginner', 'Intermediate', 'Advanced', 'Expert'],
   datasets: [
     {
       label: 'Estudiantes',
-      data: [9, 19, 34, 25, 13],
-      backgroundColor: [
-        '#A7F3D0',
-        '#6EE7B7',
-        '#34D399',
-        '#059669',
-        '#047857'
-      ],
+      data: promptSkillCounts.value,
+      backgroundColor: ['#A7F3D0', '#6EE7B7', '#34D399', '#059669'],
       borderRadius: 4,
       barThickness: 16
     }
   ]
-}
+}))
 
 /* ================= LINE CHART (Weekly GenAI Hours) ================= */
-const lineData = {
-
+const lineData = computed(() => ({
   labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
   datasets: [
     {
       label: 'Horas Promedio',
-      data: [4.5, 5.8, 6.2, 6.7, 7.1, 6.4, 6.9],
+      data: weeklySample.value,
       borderColor: '#0D9488',
       backgroundColor: 'rgba(13, 148, 136, 0.1)',
       tension: 0.4,
@@ -63,7 +91,7 @@ const lineData = {
       pointBackgroundColor: '#0D9488'
     }
   ]
-}
+}))
 
 const chartOptions = {
   responsive: true,
@@ -158,13 +186,15 @@ const lineOptions = {
       </div>
 
       <div class="flex flex-wrap items-baseline gap-2 mb-3 border-b border-gray-100 pb-3">
-        <span class="text-4xl font-bold text-teal-600">6.7</span>
+        <span class="text-4xl font-bold text-teal-600">
+          {{ props.isLoading ? '...' : weeklyAverage.toFixed(2) }}
+        </span>
         <span class="text-gray-400 text-xs">horas / semana</span>
       </div>
 
       <div>
         <h4 class="text-teal-700 font-semibold text-xs mb-3">
-          Evolución de uso semanal
+          Muestra de uso semanal (API)
         </h4>
         <div class="h-40 sm:h-36 lg:h-28 relative min-w-0">
           <Line :data="lineData" :options="lineOptions" />

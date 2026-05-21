@@ -1,6 +1,22 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import BournoutCard from './BournoutCard.vue';
 import CardsComponents from './CardsComponents.vue';
+import { getStudentsMetrics } from '@/services/students.service'
+import type { StudentMetrics } from '@/models/student.model'
+
+const students = ref<StudentMetrics[]>([])
+const isLoading = ref(true)
+
+onMounted(async () => {
+  try {
+    students.value = await getStudentsMetrics()
+  } catch (error) {
+    console.error('Error loading students from API', error)
+  } finally {
+    isLoading.value = false
+  }
+})
 </script>
 
 <template>
@@ -19,11 +35,11 @@ import CardsComponents from './CardsComponents.vue';
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
 
       <div class="lg:col-span-5 flex">
-        <BournoutCard />
+        <BournoutCard :students="students" :is-loading="isLoading" />
       </div>
 
       <div class="lg:col-span-7 flex">
-        <CardsComponents />
+        <CardsComponents :students="students" :is-loading="isLoading" />
       </div>
     </div>
 
