@@ -1,30 +1,28 @@
 <script setup lang="ts">
 // importacion de componentes
-import { ref } from 'vue'
-import SidebarPanel from './SidebarPanel.vue';
-import HeaderDash from './HeaderDash.vue';
-import MainDashboard from './MainDashboard.vue';
+import { ref } from "vue";
+import SidebarPanel from "./SidebarPanel.vue";
+import HeaderDash from "./HeaderDash.vue";
+import MainDashboard from "./MainDashboard.vue";
 
 // funcion que esconde el sidebar
-const isSidebarVisible = ref(true)
+const isSidebarVisible = ref(true);
 
 const toggleSidebar = () => {
-  isSidebarVisible.value = !isSidebarVisible.value
-}
-
+  isSidebarVisible.value = !isSidebarVisible.value;
+};
 </script>
 
 <template>
-  <div class="flex bg-gray-50/50  font-sans antialiased">
+  <div class="flex bg-gray-50/50 font-sans antialiased">
     <div v-if="isSidebarVisible" class="transition-all duration-300">
-      <SidebarPanel/>
+      <SidebarPanel />
     </div>
     <div :class="isSidebarVisible ? 'flex-1 flex flex-col' : 'w-full flex flex-col'">
-      <HeaderDash @toggle-sidebar="toggleSidebar"/>
-      <MainDashboard/>
+      <HeaderDash @toggle-sidebar="toggleSidebar" />
+      <MainDashboard />
     </div>
   </div>
-
 </template>
 
 <style>
